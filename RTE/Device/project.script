@@ -1,0 +1,7 @@
+load STM32L476VGTx 
+project name STCubeGenerated 
+project toolchain "MDK-ARM V5" 
+project path "C:\Users\climy\Desktop\no\RTE\Device\STM32L476VGTx\" 
+set tpl_path "C:\Users\climy\AppData\Local\Arm\Packs\Keil\STM32L4xx_DFP\2.7.0\MDK\CubeMX" 
+set dest_path "STM32L476VGTx" 
+SetCopyLibrary  "copy as reference"
