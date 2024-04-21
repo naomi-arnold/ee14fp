@@ -8,6 +8,7 @@
   *
   * Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.
+  * oled is 64 x 128
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
@@ -26,40 +27,17 @@
 #include "fonts.h"
 /* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1; 
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
+char grid[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
+void draw_board(char player);
+void clear_board(void);
 
 /**
   * @brief  The application entry point.
@@ -68,49 +46,201 @@ static void MX_I2C1_Init(void);
 int main(void)
 {
 
-  /* USER CODE BEGIN 1 */
+    /* MCU Configuration--------------------------------------------------------*/
+
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
+
+    /* Configure the system clock */
+    SystemClock_Config();
+
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_I2C1_Init();
+
+    /* USER CODE BEGIN */
+    SSD1306_Init (); // initialize the display 
+	SSD1306_GotoXY (0, 0); 
+    SSD1306_Clear();
 	
-  /* USER CODE END 1 */
+	 char currentPlayer = 'x';
 
-  /* MCU Configuration--------------------------------------------------------*/
+   // SSD1306_GotoXY (10,10); // goto 10, 10 
+    //SSD1306_Puts ("HELLO", &Font_11x18, 1); // print Hello 
+  //  SSD1306_UpdateScreen();
+    //SSD1306_GotoXY (10, 30); 
+   // SSD1306_Puts ("WORLD :)", &Font_11x18, 1); 
+   // SSD1306_UpdateScreen();
+		SSD1306_GotoXY (0, 0); 
+	//	SSD1306_Puts ("bye", &Font_11x18, 1); // print Hello 
+		//SSD1306_UpdateScreen();
+		draw_board(currentPlayer);
+		SSD1306_UpdateScreen();
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
 
-  /* USER CODE BEGIN Init */
+   /* // Game logic start
 
-  /* USER CODE END Init */
+    // Initialize NES controller
+    NES_Init();
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    // Draw Tic-Tac-Toe grid
+    draw_board();
 
-  /* USER CODE BEGIN SysInit */
+    // Initialize game state
+    char grid[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+    // 0 | 1 | 2
+    // 3 | 4 | 5
+    // 6 | 7 | 8
+    char currentPlayer = 'X';
 
-  /* USER CODE END SysInit */
+    while (1)
+    {  
+        // Read NES controller input
+        uint8_t input = NES_ReadInput();
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_I2C1_Init();
-  /* USER CODE BEGIN 2 */
-	SSD1306_Init (); // initialize the display 
-		SSD1306_GotoXY (10,10); // goto 10, 10 
-	SSD1306_Puts ("HELLO", &Font_11x18, 1); // print Hello 
-	SSD1306_GotoXY (10, 30); 
-	SSD1306_Puts ("WORLD !!", &Font_11x18, 1); 
-	SSD1306_UpdateScreen();
-  /* USER CODE END 2 */
+        // Handle player move
+        if (handlePlayerMove(input, grid, currentPlayer)) {
+            // Draw updated grid
+            draw_board();
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-		
+            // Check for win condition
+            if (checkWin(grid, currentPlayer)) {
+                // Handle win condition
+                SSD1306_GotoXY (10, 30); 
+                if (currentPlayer == 'X') 
+                    SSD1306_Puts ("X wins", &Font_11x18, 1); 
+                else 
+                    SSD1306_Puts ("O wins", &Font_11x18, 1);
+                SSD1306_ScrollRight(3, 6);
+                break;
+            }
 
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+            // Switch player
+            currentPlayer = (currentPlayer == 'x') ? 'o' : 'x';
+        } 
+      
+    } */
+
+  
 }
+
+
+void draw_board(char player)
+{
+    // Clear the OLED display
+    SSD1306_Clear();
+	
+
+    // Draw horizontal lines
+    SSD1306_DrawLine(0, 21, 128, 21, 1);
+    SSD1306_DrawLine(0, 42, 128, 42, 1);
+
+    // Draw vertical lines
+    SSD1306_DrawLine(42, 0, 42, 128, 1);
+    SSD1306_DrawLine(84, 0, 84, 128, 1);
+	
+	
+/*	for (uint8_t i = 0; i < 9; i++) {
+		uint16_t x = i;
+		uint16_t y = 0;
+		SSD1306_GotoXY (x, y);
+	  SSD1306_Puts (&grid[i], &Font_11x18, 1);
+		
+	} */
+    // first col	
+	  SSD1306_GotoXY (15, 0);
+	  SSD1306_Puts (&player, &Font_11x18, 1);
+	  SSD1306_GotoXY (15, 22);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	  SSD1306_GotoXY (15, 44);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	//second col
+	  SSD1306_GotoXY (57, 0);
+	  SSD1306_Puts ("o", &Font_11x18, 1);
+	  SSD1306_GotoXY (57, 22);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	  SSD1306_GotoXY (57, 44);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	//third col
+	  SSD1306_GotoXY (99, 0);
+	  SSD1306_Puts ("o", &Font_11x18, 1);
+	  SSD1306_GotoXY (99, 22);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	  SSD1306_GotoXY (99, 44);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+
+    SSD1306_UpdateScreen();
+}
+
+void clear_board(void)
+{
+    // Clear the OLED display
+    SSD1306_Clear();
+    //draw_board();
+}
+
+/*
+bool handlePlayerMove(uint8_t cell, char *grid, char player)
+{
+
+    // Check if the cell is empty
+    if (grid[cell] == ' ') {
+        grid[cell] = player;
+        return true;
+    } else {
+        return false; // Cell already occupied
+    }
+
+}
+
+bool checkWin(char *grid, char player) {
+    // Check rows
+    for (int i = 0; i < 3; i++) {
+        if (grid[i * 3] == player && grid[i * 3 + 1] == player && grid[i * 3 + 2] == player)
+            return true;
+    }
+
+    // Check columns
+    for (int i = 0; i < 3; i++) {
+        if (grid[i] == player && grid[i + 3] == player && grid[i + 6] == player)
+            return true;
+    }
+
+    // Check diagonals
+    if ((grid[0] == player && grid[4] == player && grid[8] == player) ||
+        (grid[2] == player && grid[4] == player && grid[6] == player))
+        return true;
+
+    // No win condition found
+    return false;
+}
+
+ // first col	
+	  SSD1306_GotoXY (15, 0);
+	  SSD1306_Puts ("o", &Font_11x18, 1);
+	  SSD1306_GotoXY (15, 22);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	  SSD1306_GotoXY (15, 44);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	//second col
+	  SSD1306_GotoXY (57, 0);
+	  SSD1306_Puts ("o", &Font_11x18, 1);
+	  SSD1306_GotoXY (57, 22);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	  SSD1306_GotoXY (57, 44);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	//third col
+	  SSD1306_GotoXY (99, 0);
+	  SSD1306_Puts ("o", &Font_11x18, 1);
+	  SSD1306_GotoXY (99, 22);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+	  SSD1306_GotoXY (99, 44);
+	  SSD1306_Puts ("x", &Font_11x18, 1);
+*/
+
+
+
+/* DO NOT EDIT BELOW */
 
 /**
   * @brief System Clock Configuration
@@ -118,28 +248,28 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage
-  */
-  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Configure the main internal regulator output voltage
+    */
+    if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-  RCC_OscInitStruct.MSICalibrationValue = 0;
-  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initializes the RCC Oscillators according to the specified parameters
+    * in the RCC_OscInitTypeDef structure.
+    */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+    RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+    RCC_OscInitStruct.MSICalibrationValue = 0;
+    RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
@@ -152,7 +282,7 @@ void SystemClock_Config(void)
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
-    Error_Handler();
+      Error_Handler();
   }
 }
 
@@ -171,36 +301,36 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 1 */
 
   /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x00000004;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    hi2c1.Instance = I2C1;
+    hi2c1.Init.Timing = 0x00000004;
+    hi2c1.Init.OwnAddress1 = 0;
+    hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+    hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+    hi2c1.Init.OwnAddress2 = 0;
+    hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+    hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+    hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+    if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  /** Configure Analogue filter
-  */
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Configure Analogue filter
+    */
+    if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
-  /** Configure Digital filter
-  */
-  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C1_Init 2 */
+    /** Configure Digital filter
+    */
+    if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN I2C1_Init 2 */
 
-  /* USER CODE END I2C1_Init 2 */
+    /* USER CODE END I2C1_Init 2 */
 
 }
 
