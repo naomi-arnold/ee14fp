@@ -30,9 +30,4 @@
   c:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.6.2\Drivers\STM32L4xx_HAL_Driver\Inc\stm32l4xx_hal_i2c_ex.h \
   c:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.6.2\Drivers\STM32L4xx_HAL_Driver\Inc\stm32l4xx_hal_pwr.h \
   c:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.6.2\Drivers\STM32L4xx_HAL_Driver\Inc\stm32l4xx_hal_pwr_ex.h \
-  RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\test.h \
-  RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\ssd1306.h \
-  RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\fonts.h \
-  c:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h \
-  c:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h \
-  RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\fonts.h
+  RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\Joystick.h

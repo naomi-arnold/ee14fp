@@ -414,16 +414,6 @@
               <FilePath>.\RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\test.h</FilePath>
             </File>
             <File>
-              <FileName>NES.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\NES.c</FilePath>
-            </File>
-            <File>
-              <FileName>NES.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\NES.h</FilePath>
-            </File>
-            <File>
               <FileName>LED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\lab 4\SysTick\LED.c</FilePath>
@@ -432,6 +422,16 @@
               <FileName>LED.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\lab 4\SysTick\LED.h</FilePath>
+            </File>
+            <File>
+              <FileName>Joystick.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RTE\Device\STM32L476VGTx\STCubeGenerated\Inc\Joystick.h</FilePath>
+            </File>
+            <File>
+              <FileName>Joystick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\RTE\Device\STM32L476VGTx\STCubeGenerated\Src\Joystick.c</FilePath>
             </File>
           </Files>
         </Group>
